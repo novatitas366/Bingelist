@@ -6,6 +6,7 @@
 import { request } from './api.js';
 import { toast }   from './toast.js';
 import { openModal } from './modal.js';
+import { STATUS_LABELS, buildStatusSelect } from './utils.js';
 
 // DOM references (from index.html #view-watchlist)
 const grid      = document.getElementById('watchlistGrid');
@@ -16,14 +17,6 @@ const filterBar = document.getElementById('statusFilter');
 let items         = [];        // full list fetched from the server
 let currentFilter = 'all';     // active filter chip value
 let onViewEpisodes = null;     // callback set by app.js to switch to episodes view
-
-// Status label map — same values as WATCHLIST_STATUSES on the backend
-const STATUS_LABELS = {
-  plan_to_watch: 'Plan to watch',
-  watching:      'Watching',
-  watched:       'Watched',
-  dropped:       'Dropped',
-};
 
 // Builds a card element for one watchlist entry.
 function card(item) {
@@ -67,16 +60,9 @@ function card(item) {
   badge.textContent = STATUS_LABELS[item.status];
   body.appendChild(badge);
 
-  // --- Status dropdown (editable) ---
+  // --- Status dropdown (editable, pre-selects current status) ---
   const statusRow    = document.createElement('label');
-  const statusSelect = document.createElement('select');
-  for (const [v, label] of Object.entries(STATUS_LABELS)) {
-    const opt = document.createElement('option');
-    opt.value = v;
-    opt.textContent = label;
-    if (v === item.status) opt.selected = true; // pre-select current status
-    statusSelect.appendChild(opt);
-  }
+  const statusSelect = buildStatusSelect(item.status);
 
   // EVENT: dropdown change → PATCH /api/watchlist/:id
   statusSelect.addEventListener('change', async () => {

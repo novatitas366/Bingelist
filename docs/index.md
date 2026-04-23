@@ -19,7 +19,8 @@ Browser (public/)
        ├── watchlist.js← watchlist view
        ├── episodes.js ← episodes view
        ├── modal.js    ← show detail popup
-       └── toast.js    ← notifications
+       ├── toast.js    ← notifications
+       └── utils.js    ← stripHtml, STATUS_LABELS (shared)
 
 Server (src/)
   ├── server.js        ← entry point, Express setup
@@ -64,6 +65,7 @@ Server (src/)
 | `public/js/episodes.js` | Episode tracking view | [[episodes-js]] |
 | `public/js/modal.js` | Show detail modal | [[modal-js]] |
 | `public/js/toast.js` | Notification helper | [[toast-js]] |
+| `public/js/utils.js` | Shared helpers (stripHtml, STATUS_LABELS) | [[utils-js]] |
 
 ## Assessment docs
 

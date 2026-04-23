@@ -5,19 +5,12 @@
 import { request } from './api.js';
 import { toast }   from './toast.js';
 import { openModal } from './modal.js';
+import { stripHtml, buildStatusSelect } from './utils.js';
 
 // DOM references for the search section (see index.html #view-search)
 const form    = document.getElementById('searchForm');
 const input   = document.getElementById('searchInput');
 const results = document.getElementById('searchResults');
-
-// TVMaze summaries contain HTML — strip tags before showing plain text.
-function stripHtml(html) {
-  if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || '';
-}
 
 // Builds and returns a single show card element.
 // All DOM is created programmatically (no HTML template strings) to avoid XSS risks.
@@ -64,19 +57,8 @@ function card(show) {
   const actions = document.createElement('div');
   actions.className = 'card-actions';
 
-  // Dropdown for choosing the initial watchlist status
-  const statusSelect = document.createElement('select');
-  for (const [v, label] of [
-    ['plan_to_watch', 'Plan to watch'],
-    ['watching',      'Watching'],
-    ['watched',       'Watched'],
-    ['dropped',       'Dropped'],
-  ]) {
-    const opt = document.createElement('option');
-    opt.value = v;
-    opt.textContent = label;
-    statusSelect.appendChild(opt);
-  }
+  // Dropdown for choosing the initial watchlist status (no pre-selection)
+  const statusSelect = buildStatusSelect();
   statusSelect.style.flex = '1';
 
   // Add button — sends a POST request with the Authorization header

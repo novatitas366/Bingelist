@@ -3,6 +3,7 @@
 // Three ways to close: the ✕ button, clicking the dark backdrop, or pressing Escape.
 
 import { request } from './api.js';
+import { stripHtml } from './utils.js';
 
 // DOM references — these elements live in index.html inside #modal-backdrop
 const backdrop  = document.getElementById('modal-backdrop');
@@ -12,14 +13,6 @@ const titleEl   = document.getElementById('modalTitle');
 const metaEl    = document.getElementById('modalMeta');
 const summaryEl = document.getElementById('modalSummary');
 const castEl    = document.getElementById('modalCast');
-
-// TVMaze summaries contain HTML tags (<b>, <p>, etc.) — strip them before displaying.
-function stripHtml(html) {
-  if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html; // parse the HTML string into a real DOM node
-  return tmp.textContent || ''; // .textContent reads only the text, no tags
-}
 
 // Opens the modal and populates it with show data.
 // The show object comes from either the search results or the /api/shows/:id endpoint.

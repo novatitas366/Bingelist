@@ -4,6 +4,7 @@
 
 import { request } from './api.js';
 import { toast }   from './toast.js';
+import { stripHtml, STATUS_LABELS } from './utils.js';
 
 // DOM references (from index.html #view-episodes)
 const title = document.getElementById('episodesTitle');
@@ -12,21 +13,6 @@ const body  = document.getElementById('episodesBody');
 
 // Tracks the currently displayed show (used by markAllBtn and checkAutoComplete)
 let currentShow = null;
-
-const STATUS_LABELS = {
-  plan_to_watch: 'Plan to watch',
-  watching:      'Watching',
-  watched:       'Watched',
-  dropped:       'Dropped',
-};
-
-// TVMaze summaries contain HTML tags — strip them before displaying as plain text.
-function stripHtml(html) {
-  if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || '';
-}
 
 // Groups a flat episode array into a Map keyed by season number.
 // Returns sorted [ [seasonNum, episodesArray], ... ] pairs.
