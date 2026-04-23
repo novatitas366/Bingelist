@@ -43,6 +43,7 @@ html, body {
   font-size: 15px;
   line-height: 1.5;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -98,10 +99,9 @@ a { color: var(--primary); }
 .tabs {
   display: flex;
   gap: 4px;
-  flex: 1;
+  flex: 1 1 100%;
   justify-content: center;
   order: 3;
-  width: 100%;
 }
 
 .tab {
