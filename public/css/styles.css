@@ -34,9 +34,15 @@
   box-sizing: border-box;
 }
 
-html, body {
+html {
+  overflow-x: hidden;
+}
+
+body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100vw;
   background: var(--bg);
   color: var(--text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -224,7 +230,7 @@ label {
 
 .stack { display: flex; flex-direction: column; gap: 12px; }
 .row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-.row input { flex: 1; min-width: 200px; }
+.row input { flex: 1; min-width: 0; }
 
 .error {
   color: var(--danger);
