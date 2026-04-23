@@ -46,7 +46,7 @@ function setAuthed(authed) {
   for (const el of authedEls) {
     el.hidden = !authed;
   }
-  // Enable/disable nav tabs (guests can't see watchlist or episodes)
+  // Disable nav tabs when logged out — no token means any API call would fail with 401
   for (const tab of tabs) {
     tab.disabled = !authed;
   }
