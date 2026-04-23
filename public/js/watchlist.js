@@ -1,28 +1,39 @@
+// Watchlist view — shows the user's saved shows with status/note editing and removal.
+// Exported functions called by app.js:
+//   initWatchlist({ onViewEpisodes }) — set up filter chips and episode callback
+//   refreshWatchlist()               — fetch latest data from the server and re-render
+
 import { request } from './api.js';
-import { toast } from './toast.js';
+import { toast }   from './toast.js';
 import { openModal } from './modal.js';
 
-const grid = document.getElementById('watchlistGrid');
-const empty = document.getElementById('watchlistEmpty');
+// DOM references (from index.html #view-watchlist)
+const grid      = document.getElementById('watchlistGrid');
+const empty     = document.getElementById('watchlistEmpty');
 const filterBar = document.getElementById('statusFilter');
 
-let items = [];
-let currentFilter = 'all';
-let onViewEpisodes = null;
+// In-memory state — refreshWatchlist() keeps this up to date
+let items         = [];        // full list fetched from the server
+let currentFilter = 'all';     // active filter chip value
+let onViewEpisodes = null;     // callback set by app.js to switch to episodes view
 
+// Status label map — same values as WATCHLIST_STATUSES on the backend
 const STATUS_LABELS = {
   plan_to_watch: 'Plan to watch',
-  watching: 'Watching',
-  watched: 'Watched',
-  dropped: 'Dropped',
+  watching:      'Watching',
+  watched:       'Watched',
+  dropped:       'Dropped',
 };
 
+// Builds a card element for one watchlist entry.
 function card(item) {
   const el = document.createElement('div');
   el.className = 'card';
 
+  // Fetches full show details then opens the modal
   async function showDetails() {
     try {
+      // GET /api/shows/:id with Authorization header
       const data = await request(`/shows/${item.show_id}`);
       openModal(data);
     } catch (e) {
@@ -30,17 +41,19 @@ function card(item) {
     }
   }
 
+  // --- Poster image ---
   const img = document.createElement('div');
   img.className = 'card-img';
   if (item.show_image) img.style.backgroundImage = `url("${item.show_image}")`;
   img.style.cursor = 'pointer';
   img.title = 'View details';
-  img.addEventListener('click', showDetails);
+  img.addEventListener('click', showDetails); // EVENT: click → fetch show + open modal
   el.appendChild(img);
 
   const body = document.createElement('div');
   body.className = 'card-body';
 
+  // --- Title ---
   const title = document.createElement('div');
   title.className = 'card-title';
   title.textContent = item.show_name;
@@ -48,31 +61,36 @@ function card(item) {
   title.addEventListener('click', showDetails);
   body.appendChild(title);
 
+  // --- Status badge (read-only colour indicator) ---
   const badge = document.createElement('span');
   badge.className = `status-badge ${item.status}`;
   badge.textContent = STATUS_LABELS[item.status];
   body.appendChild(badge);
 
-  const statusRow = document.createElement('label');
+  // --- Status dropdown (editable) ---
+  const statusRow    = document.createElement('label');
   const statusSelect = document.createElement('select');
   for (const [v, label] of Object.entries(STATUS_LABELS)) {
     const opt = document.createElement('option');
     opt.value = v;
     opt.textContent = label;
-    if (v === item.status) opt.selected = true;
+    if (v === item.status) opt.selected = true; // pre-select current status
     statusSelect.appendChild(opt);
   }
+
+  // EVENT: dropdown change → PATCH /api/watchlist/:id
   statusSelect.addEventListener('change', async () => {
     try {
       await request(`/watchlist/${item.id}`, {
         method: 'PATCH',
-        auth: true,
-        body: { status: statusSelect.value },
+        auth:   true,
+        body:   { status: statusSelect.value },
       });
+      // Update local state and the badge without a full page re-fetch
       item.status = statusSelect.value;
-      badge.className = `status-badge ${item.status}`;
+      badge.className   = `status-badge ${item.status}`;
       badge.textContent = STATUS_LABELS[item.status];
-      render();
+      render(); // re-render so the filter chips hide/show this card correctly
     } catch (e) {
       toast(e.message, 'error');
     }
@@ -81,50 +99,61 @@ function card(item) {
   statusRow.appendChild(statusSelect);
   body.appendChild(statusRow);
 
+  // --- Note textarea (editable) ---
   const noteLabel = document.createElement('label');
   noteLabel.textContent = 'Note';
   const noteInput = document.createElement('textarea');
-  noteInput.rows = 2;
-  noteInput.value = item.note || '';
+  noteInput.rows        = 2;
+  noteInput.value       = item.note || '';
   noteInput.placeholder = 'Add a note…';
-  let noteTimer = null;
+
+  let noteTimer = null; // debounce timer handle
+
+  // EVENT: typing in the textarea → debounced PATCH after 500ms of silence
+  // Debounce prevents sending a PATCH on every single keystroke.
   noteInput.addEventListener('input', () => {
     clearTimeout(noteTimer);
     noteTimer = setTimeout(async () => {
       try {
         await request(`/watchlist/${item.id}`, {
           method: 'PATCH',
-          auth: true,
-          body: { note: noteInput.value },
+          auth:   true,
+          body:   { note: noteInput.value },
         });
-        item.note = noteInput.value;
+        item.note = noteInput.value; // keep local state in sync
       } catch (e) {
         toast(e.message, 'error');
       }
-    }, 500);
+    }, 500); // wait 500ms after the last keystroke before sending
   });
   noteLabel.appendChild(noteInput);
   body.appendChild(noteLabel);
 
+  // --- Action buttons ---
   const actions = document.createElement('div');
   actions.className = 'card-actions';
 
+  // Episodes button — switches to the episodes view for this show
   const episodesBtn = document.createElement('button');
-  episodesBtn.className = 'btn';
+  episodesBtn.className   = 'btn';
   episodesBtn.textContent = 'Episodes';
   episodesBtn.addEventListener('click', () => {
+    // EVENT: click → callback provided by app.js to switch to episodes view
     if (onViewEpisodes) onViewEpisodes(item);
   });
 
+  // Remove button — DELETE /api/watchlist/:id after confirmation
   const deleteBtn = document.createElement('button');
-  deleteBtn.className = 'btn btn-danger';
+  deleteBtn.className   = 'btn btn-danger';
   deleteBtn.textContent = 'Remove';
   deleteBtn.addEventListener('click', async () => {
+    // Confirm dialog blocks until the user clicks OK or Cancel
     if (!confirm(`Remove "${item.show_name}" from your watchlist?`)) return;
     try {
+      // HTTP DELETE with Authorization header
       await request(`/watchlist/${item.id}`, { method: 'DELETE', auth: true });
-      items = items.filter((i) => i.id !== item.id);
-      render();
+      items = items.filter((i) => i.id !== item.id); // remove from in-memory list
+      render(); // re-render without the deleted item
       toast('Removed');
     } catch (e) {
       toast(e.message, 'error');
@@ -139,6 +168,8 @@ function card(item) {
   return el;
 }
 
+// Renders the filtered list of items into the grid.
+// Reads from the in-memory `items` array — no network request.
 function render() {
   grid.innerHTML = '';
   const filtered =
@@ -158,6 +189,9 @@ function render() {
   for (const item of filtered) grid.appendChild(card(item));
 }
 
+// Fetches the watchlist from the server and re-renders.
+// GET /api/watchlist with Authorization header.
+// Called by app.js on login and when switching to the watchlist tab.
 export async function refreshWatchlist() {
   try {
     items = await request('/watchlist', { auth: true });
@@ -167,14 +201,18 @@ export async function refreshWatchlist() {
   }
 }
 
+// Wires up the filter chips and stores the episode-view callback.
+// Called once from app.js during initialisation.
 export function initWatchlist({ onViewEpisodes: cb }) {
   onViewEpisodes = cb;
+
+  // EVENT: click on any filter chip → update filter and re-render
   filterBar.addEventListener('click', (e) => {
-    const btn = e.target.closest('.chip');
+    const btn = e.target.closest('.chip'); // works even if a child element was clicked
     if (!btn) return;
     filterBar.querySelectorAll('.chip').forEach((b) => b.classList.remove('on'));
     btn.classList.add('on');
-    currentFilter = btn.dataset.status;
+    currentFilter = btn.dataset.status; // 'all' | 'plan_to_watch' | 'watching' | ...
     render();
   });
 }

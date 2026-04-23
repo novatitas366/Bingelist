@@ -2,41 +2,54 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- viewport: makes the page scale correctly on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Watchly</title>
+    <!-- Google Fonts: Inter loaded from an external CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
+
+    <!-- Top navigation bar — always visible -->
     <header class="topbar">
       <div class="brand">
         <span class="brand-mark">▶</span>
         <span>Watchly</span>
       </div>
+
+      <!-- Tab buttons — disabled when logged out (app.js toggles t.disabled) -->
+      <!-- data-view tells app.js which section to show when each tab is clicked -->
       <nav class="tabs">
         <button class="tab" data-view="search">Search</button>
         <button class="tab" data-view="watchlist">Watchlist</button>
         <button class="tab" data-view="episodes">Episodes</button>
       </nav>
+
+      <!-- Hidden until logged in — app.js toggles all [data-authed-only] elements -->
       <div class="auth-area" data-authed-only hidden>
-        <span class="who" id="currentUser"></span>
+        <span class="who" id="currentUser"></span>  <!-- filled by app.js with "@username" -->
         <button class="btn btn-ghost" id="logoutBtn">Log out</button>
       </div>
     </header>
 
     <main class="container">
-      <!-- Login/register -->
+
+      <!-- ===== LOGIN / REGISTER VIEW ===== -->
+      <!-- Shown by app.js when no JWT is stored in localStorage -->
       <section id="view-auth" class="view">
         <div class="auth-card">
           <h1>Welcome to Watchly</h1>
           <p class="muted">Track the shows you love.</p>
 
+          <!-- Toggle between Login and Sign up modes (app.js reads data-mode) -->
           <div class="auth-toggle">
             <button class="toggle on" data-mode="login">Log in</button>
-            <button class="toggle" data-mode="register">Sign up</button>
+            <button class="toggle"    data-mode="register">Sign up</button>
           </div>
 
+          <!-- Single form used for both login and register — app.js switches the label/action -->
           <form id="authForm" class="stack">
             <label>
               Username
@@ -47,24 +60,30 @@
               <input name="password" type="password" autocomplete="current-password" required minlength="8" />
             </label>
             <button class="btn btn-primary" type="submit">Log in</button>
+            <!-- Error message shown below the form on login/register failure -->
             <p class="error" id="authError" hidden></p>
           </form>
         </div>
       </section>
 
-      <!-- Search -->
+      <!-- ===== SEARCH VIEW ===== -->
+      <!-- Controlled by search.js — calls GET /api/shows/search?q=... -->
       <section id="view-search" class="view" hidden>
         <h2>Search shows</h2>
         <form id="searchForm" class="row">
           <input id="searchInput" type="search" placeholder="e.g. Breaking Bad" />
           <button class="btn btn-primary" type="submit">Search</button>
         </form>
+        <!-- Show result cards are injected here by search.js -->
         <div id="searchResults" class="grid"></div>
       </section>
 
-      <!-- Watchlist -->
+      <!-- ===== WATCHLIST VIEW ===== -->
+      <!-- Controlled by watchlist.js — calls GET /api/watchlist with Authorization header -->
       <section id="view-watchlist" class="view" hidden>
         <h2>My watchlist</h2>
+        <!-- Filter chips — clicking one re-renders cards from memory, no new HTTP request -->
+        <!-- data-status values match the CHECK constraint in the watchlist table -->
         <div class="filter-bar" id="statusFilter">
           <button class="chip on" data-status="all">All</button>
           <button class="chip" data-status="plan_to_watch">Plan to watch</button>
@@ -72,38 +91,49 @@
           <button class="chip" data-status="watched">Watched</button>
           <button class="chip" data-status="dropped">Dropped</button>
         </div>
+        <!-- Watchlist cards injected here by watchlist.js -->
         <div id="watchlistGrid" class="grid"></div>
+        <!-- Shown when the list is empty or no cards match the active filter -->
         <p id="watchlistEmpty" class="muted" hidden>Nothing here yet — add a show from the Search tab.</p>
       </section>
 
-      <!-- Episodes -->
+      <!-- ===== EPISODES VIEW ===== -->
+      <!-- Controlled by episodes.js — calls GET /api/shows/:id/episodes + GET /api/episodes/:show_id -->
       <section id="view-episodes" class="view" hidden>
         <div class="episodes-header">
           <button class="btn btn-ghost" id="backToWatchlist">← Back</button>
+          <!-- Updated by episodes.js with the show name + season count -->
           <h2 id="episodesTitle">Episodes</h2>
         </div>
+        <!-- Shown before a show is selected; hidden once episodes load -->
         <p id="episodesHint" class="muted">Pick a show from your watchlist to track episodes.</p>
+        <!-- Season sections injected here by episodes.js -->
         <div id="episodesBody"></div>
       </section>
+
     </main>
 
+    <!-- Toast notification — shown briefly by toast.js at the bottom of the screen -->
     <div id="toast" class="toast" hidden></div>
 
+    <!-- Show detail modal — controlled by modal.js -->
     <div id="modal-backdrop" class="modal-backdrop" hidden>
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
         <div class="modal-inner">
-          <div class="modal-poster" id="modalPoster"></div>
+          <div class="modal-poster" id="modalPoster"></div>  <!-- poster image (CSS background) -->
           <div class="modal-content">
-            <h2 id="modalTitle"></h2>
-            <div class="modal-meta" id="modalMeta"></div>
-            <div class="modal-summary" id="modalSummary"></div>
-            <div id="modalCast"></div>
+            <h2 id="modalTitle"></h2>                          <!-- show name -->
+            <div class="modal-meta"    id="modalMeta"></div>   <!-- year · status · network · genres -->
+            <div class="modal-summary" id="modalSummary"></div><!-- description -->
+            <div id="modalCast"></div>                         <!-- cast list, loaded async -->
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Single JS entry point — type="module" enables ES import/export syntax -->
+    <!-- All other JS files are loaded transitively via imports inside app.js -->
     <script type="module" src="/js/app.js"></script>
   </body>
 </html>

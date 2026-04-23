@@ -1,20 +1,33 @@
+/* =============================================
+   DESIGN TOKENS (CSS Custom Properties)
+   All colours, shadows, and sizes are defined
+   here once and referenced everywhere else via var().
+   Changing a value here updates the whole app.
+   ============================================= */
 :root {
-  --bg: #0f1115;
-  --panel: #171a21;
-  --panel-2: #1f232d;
-  --border: #2a2f3a;
-  --text: #e7eaf0;
-  --muted: #8a93a5;
-  --primary: #8b6fff;
+  /* Background layers — darker = further back */
+  --bg:       #0f1115;  /* page background */
+  --panel:    #171a21;  /* cards, topbar */
+  --panel-2:  #1f232d;  /* inputs, nested panels */
+  --border:   #2a2f3a;  /* borders and dividers */
+
+  /* Text colours */
+  --text:  #e7eaf0;     /* primary text */
+  --muted: #8a93a5;     /* secondary / placeholder text */
+
+  /* Brand & status colours */
+  --primary:       #8b6fff;
   --primary-hover: #a08eff;
-  --danger: #ef4a5b;
-  --success: #3fcf8e;
-  --warn: #f0b341;
-  --radius: 10px;
-  --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --danger:  #ef4a5b;   /* delete / error */
+  --success: #3fcf8e;   /* watched / ok */
+  --warn:    #f0b341;   /* watching */
+
+  /* Reusable values */
+  --radius:       10px;
+  --shadow:       0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow-card:  0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.6);
-  --glow: 0 0 0 3px rgba(139, 111, 255, 0.25);
+  --glow:         0 0 0 3px rgba(139, 111, 255, 0.25); /* focus ring */
 }
 
 * {
@@ -52,7 +65,9 @@ h2 { font-size: 1.25rem; }
 
 a { color: var(--primary); }
 
-/* --- Topbar --- */
+/* =============================================
+   TOPBAR — sticky header with brand + tabs + user info
+   ============================================= */
 
 .topbar {
   display: flex;
@@ -129,7 +144,9 @@ a { color: var(--primary); }
   font-size: 0.9rem;
 }
 
-/* --- Main --- */
+/* =============================================
+   MAIN CONTENT AREA — centres content with max-width
+   ============================================= */
 
 .container {
   max-width: 1100px;
@@ -146,7 +163,9 @@ a { color: var(--primary); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Forms / buttons --- */
+/* =============================================
+   FORMS AND BUTTONS
+   ============================================= */
 
 .btn {
   background: var(--panel-2);
@@ -213,7 +232,9 @@ label {
   font-size: 0.88rem;
 }
 
-/* --- Auth card --- */
+/* =============================================
+   AUTH CARD — the login/register form panel
+   ============================================= */
 
 .auth-card {
   max-width: 380px;
@@ -251,7 +272,13 @@ label {
   color: white;
 }
 
-/* --- Grid / cards --- */
+/* =============================================
+   GRID AND CARDS — responsive card grid
+   Breakpoints:
+     default  (<640px)  → 1 column  (mobile)
+     ≥640px             → 2 columns (tablet)
+     ≥1024px            → 3 columns (desktop)
+   ============================================= */
 
 .grid {
   display: grid;
@@ -339,7 +366,9 @@ label {
 .status-badge.watched { color: var(--success); background: rgba(63, 207, 142, 0.12); }
 .status-badge.dropped { color: var(--danger); background: rgba(239, 74, 91, 0.1); }
 
-/* --- Filter chips --- */
+/* =============================================
+   FILTER CHIPS — the status filter buttons on the watchlist
+   ============================================= */
 
 .filter-bar {
   display: flex;
@@ -368,7 +397,9 @@ label {
   border-color: var(--primary);
 }
 
-/* --- Episodes view --- */
+/* =============================================
+   EPISODES VIEW — collapsible season sections
+   ============================================= */
 
 .episodes-header {
   display: flex;
@@ -445,7 +476,10 @@ label {
 .episode-meta { color: var(--muted); font-size: 0.8rem; }
 .episode-desc { color: var(--muted); font-size: 0.8rem; margin-top: 3px; line-height: 1.5; }
 
-/* --- Modal --- */
+/* =============================================
+   MODAL — show detail overlay
+   On screens ≤500px the poster stacks above the content (flex-direction: column)
+   ============================================= */
 
 .modal-backdrop {
   position: fixed;
@@ -536,7 +570,9 @@ label {
   line-height: 1.6;
 }
 
-/* --- Cast section --- */
+/* =============================================
+   CAST SECTION — list of actors inside the modal
+   ============================================= */
 
 .cast-section { margin-top: 16px; }
 
@@ -595,7 +631,9 @@ label {
   .modal-poster { width: 100%; height: 220px; min-width: unset; }
 }
 
-/* --- Toast --- */
+/* =============================================
+   TOAST — brief notification at the bottom of the screen
+   ============================================= */
 
 .toast {
   position: fixed;
@@ -620,7 +658,11 @@ label {
 .toast.error { border-color: var(--danger); color: var(--danger); }
 .toast.success { border-color: var(--success); color: var(--success); }
 
-/* --- Responsive topbar --- */
+/* =============================================
+   RESPONSIVE TOPBAR
+   On mobile the tabs wrap below the brand on a second row.
+   At ≥720px the tabs stay inline on the same row.
+   ============================================= */
 
 @media (min-width: 720px) {
   .tabs {
@@ -630,7 +672,9 @@ label {
   }
 }
 
-/* --- Episodes hero --- */
+/* =============================================
+   EPISODES HERO — poster + show title + overall progress bar
+   ============================================= */
 
 .episodes-hero {
   display: flex;
@@ -662,7 +706,7 @@ label {
   margin: 0 0 6px;
 }
 
-/* --- Overall progress bar --- */
+/* Overall progress bar — fills to 100% and turns green when all episodes watched */
 
 .overall-progress { margin-top: 10px; }
 
@@ -688,7 +732,7 @@ label {
 
 .progress-fill.complete { background: var(--success); }
 
-/* --- Season header updates --- */
+/* Per-season mini progress bar + chevron rotate animation */
 
 .season-label {
   display: flex;
@@ -742,7 +786,7 @@ label {
   pointer-events: auto;
 }
 
-/* --- Watched episode dimming --- */
+/* Watched episodes appear dimmed with a strikethrough title */
 
 .episode.watched { opacity: 0.5; }
 
