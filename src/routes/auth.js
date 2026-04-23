@@ -32,10 +32,10 @@ router.post('/register', async (req, res, next) => {
 
     // HTTP 201 = a new resource was created (the user account)
     res.status(201).json({ token, user });
-  } catch (e) {
+  } catch (error) {
     // SQLite UNIQUE constraint fires when username is already taken
-    if (isUniqueViolation(e)) return res.status(409).json({ error: 'username already taken' });
-    next(e); // pass anything else to the global error handler
+    if (isUniqueViolation(error)) return res.status(409).json({ error: 'username already taken' });
+    next(error); // pass anything else to the global error handler
   }
 });
 
@@ -62,8 +62,8 @@ router.post('/login', async (req, res, next) => {
 
     const token = signToken(row.id);
     res.json({ token, user: { id: row.id, username: row.username } });
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    next(error);
   }
 });
 

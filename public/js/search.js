@@ -84,14 +84,14 @@ function card(show) {
       });
       addBtn.textContent = 'Added ✓'; // visual confirmation — button stays disabled
       toast(`Added "${show.name}"`);
-    } catch (e) {
+    } catch (error) {
       addBtn.disabled = false;
-      if (e.status === 409) {
+      if (error.status === 409) {
         // HTTP 409 Conflict = show is already in this user's watchlist
         addBtn.textContent = 'In list';
         toast('Already in watchlist', 'error');
       } else {
-        toast(e.message, 'error');
+        toast(error.message, 'error');
       }
     }
   });
@@ -105,28 +105,28 @@ function card(show) {
 }
 
 // Calls the search API and renders results into the grid.
-async function runSearch(q) {
+async function runSearch(query) {
   results.innerHTML = '<p class="muted">Searching…</p>';
   try {
     // GET /api/shows/search?q=... — query parameter in the URL
-    const shows = await request(`/shows/search?q=${encodeURIComponent(q)}`);
+    const shows = await request(`/shows/search?q=${encodeURIComponent(query)}`);
     results.innerHTML = '';
     if (shows.length === 0) {
       results.innerHTML = '<p class="muted">No results.</p>';
       return;
     }
     for (const show of shows) results.appendChild(card(show));
-  } catch (e) {
-    results.innerHTML = `<p class="error">${e.message}</p>`;
+  } catch (error) {
+    results.innerHTML = `<p class="error">${error.message}</p>`;
   }
 }
 
 // Attaches the form submit listener — called once from app.js on page load.
 // EVENT-DRIVEN: the search only runs when the user submits the form.
 export function initSearch() {
-  form.addEventListener('submit', (e) => {
-    e.preventDefault(); // stop the browser from reloading the page (default form behaviour)
-    const q = input.value.trim();
-    if (q) runSearch(q);
+  form.addEventListener('submit', (event) => {
+    event.preventDefault(); // stop the browser from reloading the page (default form behaviour)
+    const query = input.value.trim();
+    if (query) runSearch(query);
   });
 }

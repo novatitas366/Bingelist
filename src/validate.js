@@ -43,11 +43,11 @@ export function optionalString(val, name, opts = {}) {
 // Accepts numeric strings from URL parameters (req.params.id is always a string).
 // Returns the integer on success.
 export function requireInt(val, name) {
-  const n = Number(val);
-  if (!Number.isInteger(n)) {
+  const num = Number(val);
+  if (!Number.isInteger(num)) {
     throw new ValidationError(`${name} must be an integer`, name);
   }
-  return n;
+  return num;
 }
 
 // Validates that a value is one of the allowed choices.

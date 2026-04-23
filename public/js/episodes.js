@@ -39,9 +39,9 @@ function renderSeason(num, eps, watched, allEps, updateOverall, checkAutoComplet
   if (num === 1) sec.classList.add('open'); // Season 1 starts expanded
 
   // Helper functions that compute live counts from the shared `watched` Set
-  const watchedCount = () => eps.filter((e) => watched.has(e.id)).length;
+  const watchedCount = () => eps.filter((ep) => watched.has(ep.id)).length;
   const pct          = () => eps.length ? (watchedCount() / eps.length) * 100 : 0;
-  const isComplete   = () => eps.every((e) => watched.has(e.id));
+  const isComplete   = () => eps.every((ep) => watched.has(ep.id));
 
   // --- Season header (click to expand/collapse) ---
   const header = document.createElement('button');
@@ -88,15 +88,15 @@ function renderSeason(num, eps, watched, allEps, updateOverall, checkAutoComplet
 
   // Updates the season header's count and progress bar after a checkbox change
   function updateSeasonHeader() {
-    const n = watchedCount();
-    countSpan.textContent = `${n} / ${eps.length}`;
+    const count = watchedCount();
+    countSpan.textContent = `${count} / ${eps.length}`;
     seasonFill.style.width = `${pct()}%`;
     header.classList.toggle('season-complete', isComplete());
   }
 
   // EVENT: "Mark all" button → POST all unwatched episodes in parallel
-  markAllBtn.addEventListener('click', async (e) => {
-    e.stopPropagation(); // don't also trigger the header collapse
+  markAllBtn.addEventListener('click', async (event) => {
+    event.stopPropagation(); // don't also trigger the header collapse
 
     const unchecked = eps.filter((ep) => !watched.has(ep.id));
     if (!unchecked.length) return; // nothing to do
@@ -115,9 +115,9 @@ function renderSeason(num, eps, watched, allEps, updateOverall, checkAutoComplet
       );
       // Update the local Set and all checkboxes in this season
       for (const ep of unchecked) watched.add(ep.id);
-      list.querySelectorAll('.episode').forEach((row) => {
-        row.querySelector('input[type="checkbox"]').checked = true;
-        row.classList.add('watched');
+      list.querySelectorAll('.episode').forEach((episodeRow) => {
+        episodeRow.querySelector('input[type="checkbox"]').checked = true;
+        episodeRow.classList.add('watched');
       });
       updateSeasonHeader();
       updateOverall(watched, allEps);
@@ -164,11 +164,11 @@ function renderSeason(num, eps, watched, allEps, updateOverall, checkAutoComplet
         updateSeasonHeader();
         updateOverall(watched, allEps);
         checkAutoComplete(allEps, watched);
-      } catch (e) {
+      } catch (error) {
         // Revert the checkbox if the request failed
         cb.checked = !cb.checked;
         row.classList.toggle('watched', cb.checked);
-        toast(e.message, 'error');
+        toast(error.message, 'error');
       } finally {
         cb.disabled = false;
       }
@@ -187,11 +187,11 @@ function renderSeason(num, eps, watched, allEps, updateOverall, checkAutoComplet
     const info = document.createElement('div');
     info.className = 'episode-info';
 
-    const t = document.createElement('div');
-    t.className  = 'episode-title';
+    const episodeTitle = document.createElement('div');
+    episodeTitle.className  = 'episode-title';
     // padStart(2, '0') formats single-digit numbers as "01", "02", etc.
-    t.textContent = `${num}×${String(ep.number ?? '?').padStart(2, '0')} · ${ep.name}`;
-    info.appendChild(t);
+    episodeTitle.textContent = `${num}×${String(ep.number ?? '?').padStart(2, '0')} · ${ep.name}`;
+    info.appendChild(episodeTitle);
 
     // Air date and runtime
     const metaParts = [];
@@ -292,18 +292,18 @@ export async function loadEpisodes(item) {
     body.appendChild(hero);
 
     // Updates the overall progress bar — called after every checkbox change
-    function updateOverall(w, allEps) {
-      const n   = allEps.filter((e) => w.has(e.id)).length;
-      const pct = allEps.length ? (n / allEps.length) * 100 : 0;
-      progressLabel.textContent = `${n} of ${allEps.length} episodes watched`;
+    function updateOverall(watchedSet, allEps) {
+      const count = allEps.filter((ep) => watchedSet.has(ep.id)).length;
+      const pct = allEps.length ? (count / allEps.length) * 100 : 0;
+      progressLabel.textContent = `${count} of ${allEps.length} episodes watched`;
       progressFill.style.width  = `${pct}%`;
       progressFill.classList.toggle('complete', pct === 100); // turns green at 100%
     }
 
     // Automatically updates watchlist status to 'watched' when every episode is checked.
     // PATCH /api/watchlist/:id  with Authorization header.
-    async function checkAutoComplete(allEps, w) {
-      const allDone = allEps.every((e) => w.has(e.id));
+    async function checkAutoComplete(allEps, watchedSet) {
+      const allDone = allEps.every((ep) => watchedSet.has(ep.id));
       if (allDone && currentShow.status !== 'watched') {
         try {
           await request(`/watchlist/${currentShow.id}`, {
@@ -333,8 +333,8 @@ export async function loadEpisodes(item) {
     for (const [num, eps] of seasonGroups) {
       body.appendChild(renderSeason(num, eps, watched, episodes, updateOverall, checkAutoComplete));
     }
-  } catch (e) {
-    body.innerHTML = `<p class="error">${e.message}</p>`;
+  } catch (error) {
+    body.innerHTML = `<p class="error">${error.message}</p>`;
   }
 }
 

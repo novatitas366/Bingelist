@@ -27,9 +27,9 @@ router.get('/:show_id', (req, res, next) => {
     const show_id = requireInt(req.params.show_id, 'show_id');
     const rows = listWatchedStmt.all(req.userId, show_id);
     // .map to unwrap the single-column rows into a plain number array: [123, 456, ...]
-    res.json(rows.map((r) => r.episode_id));
-  } catch (e) {
-    next(e);
+    res.json(rows.map((row) => row.episode_id));
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -44,8 +44,8 @@ router.post('/', (req, res, next) => {
     const episode_id = requireInt(req.body?.episode_id, 'episode_id');
     insertWatchedStmt.run(req.userId, show_id, episode_id);
     res.status(201).json({ show_id, episode_id });
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -59,8 +59,8 @@ router.delete('/:episode_id', (req, res, next) => {
     const info = deleteWatchedStmt.run(req.userId, episode_id);
     if (info.changes === 0) return res.status(404).json({ error: 'episode not marked as watched' });
     res.status(204).end();
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    next(error);
   }
 });
 

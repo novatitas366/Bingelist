@@ -25,19 +25,31 @@ const currentUserEl = document.getElementById('currentUser');   // username disp
 // Shows the named view and hides all others.
 // Also highlights the matching tab button.
 function showView(name) {
-  for (const [k, el] of Object.entries(views)) {
-    el.hidden = k !== name; // hide every view except the one we want
+  // hide all views, then show only the one we want
+  for (const key in views) {
+    views[key].hidden = key !== name;
   }
-  tabs.forEach((t) => t.classList.toggle('on', t.dataset.view === name));
+  // highlight the matching tab, un-highlight the rest
+  for (const tab of tabs) {
+    if (tab.dataset.view === name) {
+      tab.classList.add('on');
+    } else {
+      tab.classList.remove('on');
+    }
+  }
 }
 
 // Updates the UI for authenticated vs unauthenticated state.
 // Called after login, register, and logout.
 function setAuthed(authed) {
   // Show/hide elements marked with data-authed-only (e.g. the logout button)
-  authedEls.forEach((el) => (el.hidden = !authed));
+  for (const el of authedEls) {
+    el.hidden = !authed;
+  }
   // Enable/disable nav tabs (guests can't see watchlist or episodes)
-  tabs.forEach((t) => { t.disabled = !authed; });
+  for (const tab of tabs) {
+    tab.disabled = !authed;
+  }
 
   if (authed) {
     const user = getUser();
@@ -57,22 +69,33 @@ const authToggles = document.querySelectorAll('.auth-toggle .toggle'); // Login 
 let authMode = 'login'; // tracks whether the form is in login or register mode
 
 // EVENT: clicking Login/Sign up toggle switches the form mode
-authToggles.forEach((t) => {
-  t.addEventListener('click', () => {
-    authMode = t.dataset.mode; // 'login' or 'register'
-    authToggles.forEach((b) => b.classList.toggle('on', b === t));
-    authForm.querySelector('button[type=submit]').textContent =
-      authMode === 'login' ? 'Log in' : 'Sign up';
-    // Change autocomplete hint so the browser offers correct suggestions
-    authForm.querySelector('input[name=password]').autocomplete =
-      authMode === 'login' ? 'current-password' : 'new-password';
+for (const toggle of authToggles) {
+  toggle.addEventListener('click', () => {
+    authMode = toggle.dataset.mode; // 'login' or 'register'
+    for (const btn of authToggles) {
+      if (btn === toggle) {
+        btn.classList.add('on');
+      } else {
+        btn.classList.remove('on');
+      }
+    }
+    const submitBtn = authForm.querySelector('button[type=submit]');
+    const passwordInput = authForm.querySelector('input[name=password]');
+
+    if (authMode === 'login') {
+      submitBtn.textContent = 'Log in';
+      passwordInput.autocomplete = 'current-password';
+    } else {
+      submitBtn.textContent = 'Sign up';
+      passwordInput.autocomplete = 'new-password';
+    }
     authError.hidden = true; // clear any previous error
   });
-});
+}
 
 // EVENT: form submit → call login() or register() from auth.js
-authForm.addEventListener('submit', async (e) => {
-  e.preventDefault(); // prevent the browser's default full-page form submission
+authForm.addEventListener('submit', async (event) => {
+  event.preventDefault(); // prevent the browser's default full-page form submission
   authError.hidden = true;
   const fd       = new FormData(authForm);
   const username = fd.get('username').trim();
@@ -103,14 +126,14 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 // --- Tab navigation ---
 
 // EVENT: tab click → switch to the clicked view
-tabs.forEach((tab) => {
+for (const tab of tabs) {
   tab.addEventListener('click', () => {
     const name = tab.dataset.view;
     showView(name);
     // Always refresh the watchlist when the user navigates to it
     if (name === 'watchlist') refreshWatchlist();
   });
-});
+}
 
 // EVENT: "← Back" button in the episodes view → go back to the watchlist
 document.getElementById('backToWatchlist').addEventListener('click', () => {

@@ -25,9 +25,9 @@ export function openModal({ id, name, image, summary, premiered, genres, network
   if (premiered) tags.push(premiered.slice(0, 4)); // just the year
   if (status)    tags.push(status);
   if (network)   tags.push(network);
-  if (genres?.length) genres.forEach((g) => tags.push(g));
+  if (genres?.length) genres.forEach((genre) => tags.push(genre));
   // Each tag becomes a <span> styled as a pill badge
-  metaEl.innerHTML = tags.map((t) => `<span>${t}</span>`).join('');
+  metaEl.innerHTML = tags.map((tag) => `<span>${tag}</span>`).join('');
 
   summaryEl.textContent = stripHtml(summary) || 'No description available.';
 
@@ -104,11 +104,11 @@ export function closeModal() {
 closeBtn.addEventListener('click', closeModal);
 
 // 2. Click the dark backdrop outside the modal box
-backdrop.addEventListener('click', (e) => {
-  if (e.target === backdrop) closeModal(); // only close if the backdrop itself was clicked, not the modal
+backdrop.addEventListener('click', (event) => {
+  if (event.target === backdrop) closeModal(); // only close if the backdrop itself was clicked, not the modal
 });
 
 // 3. Escape key — standard keyboard behaviour for dialogs
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !backdrop.hidden) closeModal();
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !backdrop.hidden) closeModal();
 });

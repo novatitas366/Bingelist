@@ -29,8 +29,8 @@ function card(item) {
       // GET /api/shows/:id with Authorization header
       const data = await request(`/shows/${item.show_id}`);
       openModal(data);
-    } catch (e) {
-      toast(e.message, 'error');
+    } catch (error) {
+      toast(error.message, 'error');
     }
   }
 
@@ -77,8 +77,8 @@ function card(item) {
       badge.className   = `status-badge ${item.status}`;
       badge.textContent = STATUS_LABELS[item.status];
       render(); // re-render so the filter chips hide/show this card correctly
-    } catch (e) {
-      toast(e.message, 'error');
+    } catch (error) {
+      toast(error.message, 'error');
     }
   });
   statusRow.textContent = 'Status';
@@ -107,8 +107,8 @@ function card(item) {
           body:   { note: noteInput.value },
         });
         item.note = noteInput.value; // keep local state in sync
-      } catch (e) {
-        toast(e.message, 'error');
+      } catch (error) {
+        toast(error.message, 'error');
       }
     }, 500); // wait 500ms after the last keystroke before sending
   });
@@ -138,11 +138,11 @@ function card(item) {
     try {
       // HTTP DELETE with Authorization header
       await request(`/watchlist/${item.id}`, { method: 'DELETE', auth: true });
-      items = items.filter((i) => i.id !== item.id); // remove from in-memory list
+      items = items.filter((existingItem) => existingItem.id !== item.id); // remove from in-memory list
       render(); // re-render without the deleted item
       toast('Removed');
-    } catch (e) {
-      toast(e.message, 'error');
+    } catch (error) {
+      toast(error.message, 'error');
     }
   });
 
@@ -161,7 +161,7 @@ function render() {
   const filtered =
     currentFilter === 'all'
       ? items
-      : items.filter((i) => i.status === currentFilter);
+      : items.filter((item) => item.status === currentFilter);
 
   if (filtered.length === 0) {
     empty.hidden = false;
@@ -182,8 +182,8 @@ export async function refreshWatchlist() {
   try {
     items = await request('/watchlist', { auth: true });
     render();
-  } catch (e) {
-    toast(e.message, 'error');
+  } catch (error) {
+    toast(error.message, 'error');
   }
 }
 
@@ -193,10 +193,12 @@ export function initWatchlist({ onViewEpisodes: cb }) {
   onViewEpisodes = cb;
 
   // EVENT: click on any filter chip → update filter and re-render
-  filterBar.addEventListener('click', (e) => {
-    const btn = e.target.closest('.chip'); // works even if a child element was clicked
+  filterBar.addEventListener('click', (event) => {
+    const btn = event.target.closest('.chip'); // works even if a child element was clicked
     if (!btn) return;
-    filterBar.querySelectorAll('.chip').forEach((b) => b.classList.remove('on'));
+    for (const chip of filterBar.querySelectorAll('.chip')) {
+      chip.classList.remove('on');
+    }
     btn.classList.add('on');
     currentFilter = btn.dataset.status; // 'all' | 'plan_to_watch' | 'watching' | ...
     render();

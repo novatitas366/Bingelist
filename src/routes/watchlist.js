@@ -57,9 +57,9 @@ router.post('/', (req, res, next) => {
     // RETURNING clause returns the inserted row without a second SELECT round-trip
     const row = insertStmt.get(req.userId, show_id, show_name, show_image, status, note);
     res.status(201).json(row); // 201 = new resource created
-  } catch (e) {
-    if (isUniqueViolation(e)) return res.status(409).json({ error: 'show already in watchlist' });
-    next(e);
+  } catch (error) {
+    if (isUniqueViolation(error)) return res.status(409).json({ error: 'show already in watchlist' });
+    next(error);
   }
 });
 
@@ -101,8 +101,8 @@ router.patch('/:id', (req, res, next) => {
     // RETURNING returns undefined if the WHERE matched no rows
     if (!row) return res.status(404).json({ error: 'watchlist entry not found' });
     res.json(row);
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -117,8 +117,8 @@ router.delete('/:id', (req, res, next) => {
     // info.changes = number of rows deleted; 0 means the entry wasn't found
     if (info.changes === 0) return res.status(404).json({ error: 'watchlist entry not found' });
     res.status(204).end(); // 204 = success, no response body
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    next(error);
   }
 });
 

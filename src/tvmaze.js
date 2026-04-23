@@ -19,15 +19,15 @@ async function get(endpoint) {
 
 // Shared shape for a show object — used by both searchShows and getShow.
 // Extracting this avoids duplicating the 6 identical fields in both functions.
-function formatShowBase(s) {
+function formatShowBase(show) {
   return {
-    id:        s.id,
-    name:      s.name,
+    id:        show.id,
+    name:      show.name,
     // TVMaze provides two sizes; prefer the larger original
-    image:     s.image?.original || s.image?.medium || null,
-    summary:   s.summary  || null, // may contain HTML — clients must strip it
-    premiered: s.premiered || null,
-    genres:    s.genres   || [],
+    image:     show.image?.original || show.image?.medium || null,
+    summary:   show.summary  || null, // may contain HTML — clients must strip it
+    premiered: show.premiered || null,
+    genres:    show.genres   || [],
   };
 }
 
@@ -42,12 +42,12 @@ export async function searchShows(query) {
 // GET /api/shows/:id → calls TVMaze /shows/:id
 // Returns a single show with extra fields (network, status) for the detail modal.
 export async function getShow(showId) {
-  const s = await get(`/shows/${showId}`);
+  const showData = await get(`/shows/${showId}`);
   return {
-    ...formatShowBase(s),
+    ...formatShowBase(showData),
     // A show may air on a traditional network OR a streaming web channel
-    network: s.network?.name || s.webChannel?.name || null,
-    status:  s.status || null, // e.g. "Running", "Ended"
+    network: showData.network?.name || showData.webChannel?.name || null,
+    status:  showData.status || null, // e.g. "Running", "Ended"
   };
 }
 
@@ -82,9 +82,9 @@ export async function getShowCast(showId) {
 // Returns season metadata (used by the episodes view header).
 export async function getShowSeasons(showId) {
   const data = await get(`/shows/${showId}/seasons`);
-  return data.map((s) => ({
-    number:       s.number,
-    episodeCount: s.episodeCount  || null,
-    premiereDate: s.premiereDate  || null,
+  return data.map((season) => ({
+    number:       season.number,
+    episodeCount: season.episodeCount  || null,
+    premiereDate: season.premiereDate  || null,
   }));
 }

@@ -66,6 +66,6 @@ db.exec(`
 // Helper used by route files to detect a SQLite UNIQUE constraint violation.
 // SQLite surfaces constraint errors through the error message string, not a typed error class.
 // Usage: if (isUniqueViolation(e)) return res.status(409)...
-export function isUniqueViolation(e) {
-  return String(e.message).includes('UNIQUE');
+export function isUniqueViolation(error) {
+  return String(error.message).includes('UNIQUE');
 }

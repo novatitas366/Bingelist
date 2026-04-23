@@ -49,9 +49,9 @@ export async function request(path, { method = 'GET', body, auth = false } = {})
 
   // Authorization header: "Bearer <token>" — required by requireAuth middleware
   if (auth) {
-    const t = getToken();
-    if (!t) throw new ApiError('not authenticated', 401);
-    headers['Authorization'] = `Bearer ${t}`;
+    const token = getToken();
+    if (!token) throw new ApiError('not authenticated', 401);
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   const res = await fetch(`${API}${path}`, {
