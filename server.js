@@ -22,7 +22,6 @@ import { ValidationError } from './src/validate.js';
 import authRoutes      from './src/routes/auth.js';
 import showsRoutes     from './src/routes/shows.js';
 import watchlistRoutes from './src/routes/watchlist.js';
-import episodesRoutes  from './src/routes/episodes.js';
 
 // ES modules don't have __dirname, so we derive it from import.meta.url
 const __filename = fileURLToPath(import.meta.url);
@@ -45,7 +44,6 @@ app.use(express.json({ limit: '100kb' }));
 app.use('/api/auth',      authRoutes);
 app.use('/api/shows',     showsRoutes);
 app.use('/api/watchlist', watchlistRoutes);
-app.use('/api/episodes',  episodesRoutes);
 
 const publicDir = path.join(__dirname, 'public');
 

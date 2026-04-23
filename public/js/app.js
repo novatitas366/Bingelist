@@ -6,7 +6,6 @@ import { getToken, getUser }         from './api.js';
 import { login, register, logout }   from './auth.js';
 import { initSearch }                from './search.js';
 import { initWatchlist, refreshWatchlist } from './watchlist.js';
-import { loadEpisodes, clearEpisodes }     from './episodes.js';
 import { toast }                     from './toast.js';
 
 // Named references to the four <section> elements in index.html
@@ -15,7 +14,6 @@ const views = {
   auth:      document.getElementById('view-auth'),
   search:    document.getElementById('view-search'),
   watchlist: document.getElementById('view-watchlist'),
-  episodes:  document.getElementById('view-episodes'),
 };
 
 const tabs          = document.querySelectorAll('.tab');         // the nav tab buttons
@@ -118,8 +116,7 @@ authForm.addEventListener('submit', async (event) => {
 
 // EVENT: logout button click → clear token and show auth form
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  logout();        // clears JWT from localStorage
-  clearEpisodes(); // reset episodes view so stale data isn't shown after re-login
+  logout();
   setAuthed(false);
 });
 
@@ -135,25 +132,12 @@ for (const tab of tabs) {
   });
 }
 
-// EVENT: "← Back" button in the episodes view → go back to the watchlist
-document.getElementById('backToWatchlist').addEventListener('click', () => {
-  showView('watchlist');
-  refreshWatchlist();
-});
-
 // --- Initialise modules ---
 
 // initSearch attaches the search form submit listener
 initSearch();
 
-// initWatchlist sets up the filter chips and provides the callback
-// that switches to the episodes view when a user clicks "Episodes" on a card
-initWatchlist({
-  onViewEpisodes: (item) => {
-    showView('episodes');
-    loadEpisodes(item); // load episode data for the selected show
-  },
-});
+initWatchlist();
 
 // --- Session re-hydration on page load ---
 // If a JWT is already in localStorage (from a previous session), skip the login form.

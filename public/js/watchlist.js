@@ -1,7 +1,7 @@
 // Watchlist view — shows the user's saved shows with status/note editing and removal.
 // Exported functions called by app.js:
-//   initWatchlist({ onViewEpisodes }) — set up filter chips and episode callback
-//   refreshWatchlist()               — fetch latest data from the server and re-render
+//   initWatchlist() — set up filter chips
+//   refreshWatchlist() — fetch latest data from the server and re-render
 
 import { request } from './api.js';
 import { toast }   from './toast.js';
@@ -16,7 +16,6 @@ const filterBar = document.getElementById('statusFilter');
 // In-memory state — refreshWatchlist() keeps this up to date
 let items         = [];        // full list fetched from the server
 let currentFilter = 'all';     // active filter chip value
-let onViewEpisodes = null;     // callback set by app.js to switch to episodes view
 
 // Builds a card element for one watchlist entry.
 function card(item) {
@@ -119,15 +118,6 @@ function card(item) {
   const actions = document.createElement('div');
   actions.className = 'card-actions';
 
-  // Episodes button — switches to the episodes view for this show
-  const episodesBtn = document.createElement('button');
-  episodesBtn.className   = 'btn';
-  episodesBtn.textContent = 'Episodes';
-  episodesBtn.addEventListener('click', () => {
-    // EVENT: click → callback provided by app.js to switch to episodes view
-    if (onViewEpisodes) onViewEpisodes(item);
-  });
-
   // Remove button — DELETE /api/watchlist/:id after confirmation
   const deleteBtn = document.createElement('button');
   deleteBtn.className   = 'btn btn-danger';
@@ -146,7 +136,6 @@ function card(item) {
     }
   });
 
-  actions.appendChild(episodesBtn);
   actions.appendChild(deleteBtn);
   body.appendChild(actions);
 
@@ -187,10 +176,7 @@ export async function refreshWatchlist() {
   }
 }
 
-// Wires up the filter chips and stores the episode-view callback.
-// Called once from app.js during initialisation.
-export function initWatchlist({ onViewEpisodes: cb }) {
-  onViewEpisodes = cb;
+export function initWatchlist() {
 
   // EVENT: click on any filter chip → update filter and re-render
   filterBar.addEventListener('click', (event) => {

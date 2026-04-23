@@ -24,7 +24,6 @@
       <nav class="tabs">
         <button class="tab" data-view="search">Search</button>
         <button class="tab" data-view="watchlist">Watchlist</button>
-        <button class="tab" data-view="episodes">Episodes</button>
       </nav>
 
       <!-- Hidden until logged in — app.js toggles all [data-authed-only] elements -->
@@ -97,19 +96,6 @@
         <p id="watchlistEmpty" class="muted" hidden>Nothing here yet — add a show from the Search tab.</p>
       </section>
 
-      <!-- ===== EPISODES VIEW ===== -->
-      <!-- Controlled by episodes.js — calls GET /api/shows/:id/episodes + GET /api/episodes/:show_id -->
-      <section id="view-episodes" class="view" hidden>
-        <div class="episodes-header">
-          <button class="btn btn-ghost" id="backToWatchlist">← Back</button>
-          <!-- Updated by episodes.js with the show name + season count -->
-          <h2 id="episodesTitle">Episodes</h2>
-        </div>
-        <!-- Shown before a show is selected; hidden once episodes load -->
-        <p id="episodesHint" class="muted">Pick a show from your watchlist to track episodes.</p>
-        <!-- Season sections injected here by episodes.js -->
-        <div id="episodesBody"></div>
-      </section>
 
     </main>
 

@@ -10,7 +10,7 @@ export function stripHtml(html) {
 }
 
 // Human-readable labels for the four watchlist statuses.
-// Used in watchlist.js (card badges + dropdowns) and episodes.js (hero badge).
+// Used in watchlist.js (card badges + dropdowns).
 export const STATUS_LABELS = {
   plan_to_watch: 'Plan to watch',
   watching:      'Watching',
