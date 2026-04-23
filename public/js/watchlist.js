@@ -5,7 +5,6 @@
 
 import { request } from './api.js';
 import { toast }   from './toast.js';
-import { openModal } from './modal.js';
 import { STATUS_LABELS, buildStatusSelect } from './utils.js';
 
 // DOM references (from index.html #view-watchlist)
@@ -22,24 +21,10 @@ function card(item) {
   const el = document.createElement('div');
   el.className = 'card';
 
-  // Fetches full show details then opens the modal
-  async function showDetails() {
-    try {
-      // GET /api/shows/:id with Authorization header
-      const data = await request(`/shows/${item.show_id}`);
-      openModal(data);
-    } catch (error) {
-      toast(error.message, 'error');
-    }
-  }
-
   // --- Poster image ---
   const img = document.createElement('div');
   img.className = 'card-img';
   if (item.show_image) img.style.backgroundImage = `url("${item.show_image}")`;
-  img.style.cursor = 'pointer';
-  img.title = 'View details';
-  img.addEventListener('click', showDetails); // EVENT: click → fetch show + open modal
   el.appendChild(img);
 
   const body = document.createElement('div');
@@ -49,8 +34,6 @@ function card(item) {
   const title = document.createElement('div');
   title.className = 'card-title';
   title.textContent = item.show_name;
-  title.style.cursor = 'pointer';
-  title.addEventListener('click', showDetails);
   body.appendChild(title);
 
   // --- Status badge (read-only colour indicator) ---

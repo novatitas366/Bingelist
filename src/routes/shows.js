@@ -9,7 +9,7 @@
 // GET /api/shows/:id/episodes       → all episodes (path parameter)
 
 import { Router } from 'express';
-import { searchShows, getShow, getEpisodes, getShowCast, getShowSeasons } from '../tvmaze.js';
+import { searchShows, getShow, getEpisodes, getShowSeasons } from '../tvmaze.js';
 import { requireString, requireInt } from '../validate.js';
 
 const router = Router();
@@ -39,11 +39,6 @@ router.param('id', (req, res, next, val) => {
 
 // All four routes below use req.showId set by router.param above.
 // Must be declared before /:id so Express doesn't interpret "cast" etc. as an id.
-
-// --- GET /api/shows/:id/cast ---
-router.get('/:id/cast', async (req, res, next) => {
-  try { res.json(await getShowCast(req.showId)); } catch (error) { next(error); }
-});
 
 // --- GET /api/shows/:id/seasons ---
 router.get('/:id/seasons', async (req, res, next) => {

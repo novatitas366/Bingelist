@@ -4,7 +4,6 @@
 
 import { request } from './api.js';
 import { toast }   from './toast.js';
-import { openModal } from './modal.js';
 import { stripHtml, buildStatusSelect } from './utils.js';
 
 // DOM references for the search section (see index.html #view-search)
@@ -22,9 +21,6 @@ function card(show) {
   const img = document.createElement('div');
   img.className = 'card-img';
   if (show.image) img.style.backgroundImage = `url("${show.image}")`;
-  img.style.cursor = 'pointer';
-  img.title = 'View details';
-  img.addEventListener('click', () => openModal(show)); // EVENT: click → open modal
   el.appendChild(img);
 
   const body = document.createElement('div');
@@ -34,8 +30,6 @@ function card(show) {
   const title = document.createElement('div');
   title.className = 'card-title';
   title.textContent = show.name;
-  title.style.cursor = 'pointer';
-  title.addEventListener('click', () => openModal(show)); // EVENT: click → open modal
   body.appendChild(title);
 
   // --- Premiere year (optional) ---

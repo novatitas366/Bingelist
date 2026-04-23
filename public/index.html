@@ -102,21 +102,6 @@
     <!-- Toast notification — shown briefly by toast.js at the bottom of the screen -->
     <div id="toast" class="toast" hidden></div>
 
-    <!-- Show detail modal — controlled by modal.js -->
-    <div id="modal-backdrop" class="modal-backdrop" hidden>
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
-        <div class="modal-inner">
-          <div class="modal-poster" id="modalPoster"></div>  <!-- poster image (CSS background) -->
-          <div class="modal-content">
-            <h2 id="modalTitle"></h2>                          <!-- show name -->
-            <div class="modal-meta"    id="modalMeta"></div>   <!-- year · status · network · genres -->
-            <div class="modal-summary" id="modalSummary"></div><!-- description -->
-            <div id="modalCast"></div>                         <!-- cast list, loaded async -->
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Single JS entry point — type="module" enables ES import/export syntax -->
     <!-- All other JS files are loaded transitively via imports inside app.js -->
