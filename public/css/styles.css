@@ -1,89 +1,64 @@
-/* =============================================
-   DESIGN TOKENS (CSS Custom Properties)
-   All colours, shadows, and sizes are defined
-   here once and referenced everywhere else via var().
-   Changing a value here updates the whole app.
-   ============================================= */
-:root {
-  /* Background layers — darker = further back */
-  --bg:       #0f1115;  /* page background */
-  --panel:    #171a21;  /* cards, topbar */
-  --panel-2:  #1f232d;  /* inputs, nested panels */
-  --border:   #2a2f3a;  /* borders and dividers */
-
-  /* Text colours */
-  --text:  #e7eaf0;     /* primary text */
-  --muted: #8a93a5;     /* secondary / placeholder text */
-
-  /* Brand & status colours */
-  --primary:       #8b6fff;
-  --primary-hover: #a08eff;
-  --danger:  #ef4a5b;   /* delete / error */
-  --success: #3fcf8e;   /* watched / ok */
-  --warn:    #f0b341;   /* watching */
-
-  /* Reusable values */
-  --radius:       10px;
-  --shadow:       0 6px 20px rgba(0, 0, 0, 0.35);
-  --shadow-card:  0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.6);
-  --glow:         0 0 0 3px rgba(139, 111, 255, 0.25); /* focus ring */
-}
-
+/* Leidžia padding ir border įskaičiuoti į elemento plotį/aukštį */
 * {
   box-sizing: border-box;
 }
 
+/* Slepia horizontalų slinkimą — neleidžia puslapiui plėstis į šoną */
 html {
   overflow-x: hidden;
 }
 
 body {
-  margin: 0;
+  margin: 0;           /* pašalina naršyklės numatytąjį atstumą */
   padding: 0;
   width: 100%;
-  max-width: 100vw;
-  background: var(--bg);
-  color: var(--text);
+  max-width: 100vw;    /* neleidžia plėstis plačiau nei ekranas */
+  background: #0f1115; /* puslapio fonas */
+  color: #e7eaf0;      /* pagrindinis tekstas */
+  /* Šriftų sąrašas — jei Inter nėra, naudojamas kitas */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 15px;
-  line-height: 1.5;
-  min-height: 100vh;
+  line-height: 1.5;    /* eilutės aukštis — 1.5x šrifto dydžio */
+  min-height: 100vh;   /* bent jau pilnas ekrano aukštis */
   overflow-x: hidden;
 }
 
+/* Slinkimo juostos stilius (veikia tik Webkit naršyklėse: Chrome, Safari) */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+::-webkit-scrollbar-track { background: #0f1115; }                          /* takelio fonas */
+::-webkit-scrollbar-thumb { background: #2a2f3a; border-radius: 3px; }     /* slankiklio spalva */
+::-webkit-scrollbar-thumb:hover { background: #8a93a5; }                   /* hover spalva */
 
+/* Antraščių numatytieji stiliai */
 h1, h2, h3 {
-  margin: 0 0 0.6em;
+  margin: 0 0 0.6em;  /* tik apatinis tarpas */
   font-weight: 600;
 }
 
 h1 { font-size: 1.5rem; }
 h2 { font-size: 1.25rem; }
 
+/* Pagalbinė klasė antriniam tekstui (pilkesnis, mažesnis) */
 .muted {
-  color: var(--muted);
+  color: #8a93a5;      /* antrinis / placeholder tekstas */
   font-size: 0.92rem;
 }
 
-a { color: var(--primary); }
+/* Nuorodos spalva — violetinė */
+a { color: #8b6fff; }
 
 /* =============================================
-   TOPBAR — sticky header with brand + tabs + user info
+   TOPBAR — lipnus viršutinis juostas su logotipu + skiltimis + vartotoju
    ============================================= */
 
 .topbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex;          /* elementai išdėstomi eilutėje */
+  align-items: center;    /* centruojami vertikaliai */
+  gap: 12px;              /* tarpai tarp vaikų */
   padding: 12px 16px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
+  background: #171a21;   /* kortelių ir topbaro fonas */
+  border-bottom: 1px solid #2a2f3a; /* atskiriamoji linija apačioje */
+  flex-wrap: wrap;        /* leidžia elementams lipti į kitą eilutę mobiliame */
 }
 
 .brand {
@@ -94,178 +69,206 @@ a { color: var(--primary); }
   gap: 8px;
 }
 
+/* Logotipo spalvotas ženklelis — gradientas per tekstą */
 .brand-mark {
   font-size: 1.3rem;
-  background: linear-gradient(135deg, var(--primary), #c084fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: linear-gradient(135deg, #8b6fff, #c084fc);
+  -webkit-background-clip: text;        /* gradientas taikomas tik tekstui */
+  -webkit-text-fill-color: transparent; /* slepia originalią teksto spalvą */
   background-clip: text;
 }
 
+/* Skiltys (tabs) konteineris */
 .tabs {
   display: flex;
   gap: 4px;
-  flex: 1 1 100%;
+  flex: 1 1 100%;          /* mobiliame užima visą eilutę */
   justify-content: center;
-  order: 3;
+  order: 3;                /* mobiliame rodomas trečias (po brand ir auth-area) */
 }
 
+/* Viena skiltis */
 .tab {
   background: transparent;
-  border: 1px solid var(--border);
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
+  border: 1px solid #2a2f3a;            /* linijų ir kraštinių spalva */
+  border-bottom: 2px solid transparent; /* vieta aktyviai linijai apačioje */
+  color: #8a93a5;                       /* antrinis tekstas */
   padding: 8px 14px;
-  border-radius: var(--radius);
+  border-radius: 10px;
   cursor: pointer;
   font-size: 0.9rem;
-  font-family: inherit;
-  flex: 1;
+  font-family: inherit;    /* paveldi šriftą iš body */
+  flex: 1;                 /* vienodai plečiasi */
   max-width: 140px;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s; /* sklandus hover efektas */
 }
 
-.tab:hover:not(.on):not(:disabled) { background: var(--panel-2); color: var(--text); }
+/* Hover tik neaktyviai, neišjungtai skiltiai */
+.tab:hover:not(.on):not(:disabled) { background: #1f232d; color: #e7eaf0; }
+
+/* Aktyvi skiltis — violetinis fonas */
 .tab.on {
-  background: var(--primary);
-  border-color: var(--primary);
-  border-bottom-color: var(--primary-hover);
+  background: #8b6fff;
+  border-color: #8b6fff;
+  border-bottom-color: #a08eff;  /* šviesesnė versija apačiai */
   color: white;
 }
+
+/* Išjungta skiltis — blankesnė, žymeklis kaip draudimo ženklas */
 .tab:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  pointer-events: none;
+  pointer-events: none;  /* neleidžia jokių paspaudimų */
 }
 
+/* Autentifikacijos zona (prisijungti/atsijungti mygtukai) */
 .auth-area {
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-left: auto;
+  margin-left: auto;  /* stumia į dešinę pusę */
 }
 
+/* Prisijungusio vartotojo vardas */
 .who {
-  color: var(--muted);
+  color: #8a93a5;
   font-size: 0.9rem;
 }
 
 /* =============================================
-   MAIN CONTENT AREA — centres content with max-width
+   MAIN CONTENT AREA — centruoja turinį su max-width
    ============================================= */
 
 .container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px 16px 60px;
+  max-width: 1100px;       /* maksimalus plotis */
+  margin: 0 auto;          /* centruoja horizontaliai */
+  padding: 20px 16px 60px; /* apačioje daugiau padding kad turinys neliestų krašto */
 }
 
+/* Turinys atsiranda su fade-in animacija */
 .view {
   animation: fade 0.18s ease;
 }
 
+/* Fade-in animacija — iš skaidraus ir šiek tiek žemiau */
 @keyframes fade {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* =============================================
-   FORMS AND BUTTONS
+   FORMS AND BUTTONS — formos ir mygtukai
    ============================================= */
 
+/* Pagrindinis mygtukas */
 .btn {
-  background: var(--panel-2);
-  color: var(--text);
-  border: 1px solid var(--border);
+  background: #1f232d;   /* įvesties laukų ir įdėtų elementų fonas */
+  color: #e7eaf0;
+  border: 1px solid #2a2f3a;
   padding: 9px 16px;
-  border-radius: var(--radius);
+  border-radius: 10px;
   cursor: pointer;
   font-size: 0.92rem;
   font-family: inherit;
   transition: background 0.12s, border-color 0.12s, transform 0.1s, box-shadow 0.12s;
 }
-.btn:hover { background: var(--border); }
-.btn:active { transform: scale(0.97); }
+.btn:hover { background: #2a2f3a; }
+.btn:active { transform: scale(0.97); } /* paspaudus šiek tiek sumažėja */
+
+/* Pagrindinis akcentuotas mygtukas (violetinis) */
 .btn-primary {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: #8b6fff;
+  border-color: #8b6fff;
   color: white;
 }
-.btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); box-shadow: 0 4px 12px rgba(139, 111, 255, 0.4); }
+.btn-primary:hover { background: #a08eff; border-color: #a08eff; box-shadow: 0 4px 12px rgba(139, 111, 255, 0.4); }
+
+/* Skaidrus mygtukas — tik kraštas matomas */
 .btn-ghost {
   background: transparent;
-  border-color: var(--border);
+  border-color: #2a2f3a;
 }
+
+/* Pavojaus mygtukas (trynimui) — raudonas kraštas */
 .btn-danger {
   background: transparent;
-  border-color: var(--danger);
-  color: var(--danger);
+  border-color: #ef4a5b;  /* trynimas / klaidos */
+  color: #ef4a5b;
 }
-.btn-danger:hover { background: rgba(239, 74, 91, 0.1); }
+.btn-danger:hover { background: rgba(239, 74, 91, 0.1); } /* silpnas raudonas fonas hover */
+
+/* Mažas mygtukas — mažesni padding ir šriftas */
 .btn-sm { padding: 5px 10px; font-size: 0.82rem; }
 
+/* Visi įvesties laukai — vienodas bazinis stilius */
 input, select, textarea {
-  background: var(--panel-2);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: #1f232d;
+  color: #e7eaf0;
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
   padding: 9px 12px;
   font-size: 0.95rem;
   font-family: inherit;
-  width: 100%;
+  width: 100%; /* užima visą turimo ploto plotį */
 }
+/* Fokuso stilius — violetinis kraštas ir šviesa */
 input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: var(--glow);
+  outline: none;           /* pašalina naršyklės numatytąjį fokuso žiedą */
+  border-color: #8b6fff;
+  box-shadow: 0 0 0 3px rgba(139, 111, 255, 0.25); /* fokuso žiedas */
 }
 
+/* Etiketė — rodoma virš įvesties lauko kaip stulpelis */
 label {
   display: flex;
   flex-direction: column;
   gap: 5px;
   font-size: 0.88rem;
-  color: var(--muted);
+  color: #8a93a5;
 }
 
-.stack { display: flex; flex-direction: column; gap: 12px; }
-.row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-.row input { flex: 1; min-width: 0; }
+/* Pagalbiniai išdėstymo klasės */
+.stack { display: flex; flex-direction: column; gap: 12px; }   /* elementai vienas po kito */
+.row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; } /* elementai eilutėje */
+.row input { flex: 1; min-width: 0; } /* įvestis užpildo likusią vietą */
 
+/* Klaidos tekstas */
 .error {
-  color: var(--danger);
+  color: #ef4a5b;
   margin: 0;
   font-size: 0.88rem;
 }
 
 /* =============================================
-   AUTH CARD — the login/register form panel
+   AUTH CARD — prisijungimo/registracijos formos kortelė
    ============================================= */
 
 .auth-card {
-  max-width: 380px;
-  margin: 40px auto;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  max-width: 380px;        /* siaura kortelė centre */
+  margin: 40px auto;       /* centruota su tarpu viršuje */
+  background: #171a21;
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
   padding: 28px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); /* pagrindinis šešėlis */
 }
 
+/* Perjungiklis tarp "Log in" ir "Sign up" */
 .auth-toggle {
   display: flex;
   gap: 4px;
   margin: 18px 0;
-  background: var(--panel-2);
+  background: #1f232d;  /* tamsus fonas aplink mygtukus */
   padding: 4px;
-  border-radius: var(--radius);
+  border-radius: 10px;
 }
 
+/* Perjungiklio mygtukai */
 .auth-toggle .toggle {
-  flex: 1;
+  flex: 1;                 /* abu mygtukai vienodo pločio */
   background: transparent;
   border: none;
-  color: var(--muted);
+  color: #8a93a5;
   padding: 7px;
   border-radius: 6px;
   cursor: pointer;
@@ -273,63 +276,71 @@ label {
   font-size: 0.9rem;
 }
 
+/* Aktyvus perjungiklis — violetinis fonas */
 .auth-toggle .toggle.on {
-  background: var(--primary);
+  background: #8b6fff;
   color: white;
 }
 
 /* =============================================
-   GRID AND CARDS — responsive card grid
-   Breakpoints:
-     default  (<640px)  → 1 column  (mobile)
-     ≥640px             → 2 columns (tablet)
-     ≥1024px            → 3 columns (desktop)
+   GRID AND CARDS — kortelių tinklelis
+   Lūžio taškai:
+     numatyta  (<640px)  → 1 stulpelis  (mobilusis)
+     ≥640px             → 2 stulpeliai (planšetas)
+     ≥1024px            → 3 stulpeliai (kompiuteris)
    ============================================= */
 
+/* Numatyta: 1 stulpelis */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 14px;
 }
 
+/* Planšetas: 2 stulpeliai */
 @media (min-width: 640px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* Kompiuteris: 3 stulpeliai */
 @media (min-width: 1024px) {
   .grid { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* Kortelė */
 .card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
+  background: #171a21;
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
+  overflow: hidden;          /* nukerpa viską kas išlenda už kampų */
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); /* kortelių šešėlis */
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
+/* Hover efektas — kortelė šiek tiek pakyla aukštyn */
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6); /* šešėlis ant hover */
 }
 
+/* Paveikslėlio zona — proporcingos puslapio proporcijos (kaip knyga) */
 .card-img {
   width: 100%;
-  aspect-ratio: 210 / 295;
-  background-color: var(--panel-2);
-  background-size: cover;
-  background-position: center;
+  aspect-ratio: 210 / 295;    /* W:H santykis — 210×295 kaip A4 */
+  background-color: #1f232d;
+  background-size: cover;      /* paveikslėlis užpildo visą plotą */
+  background-position: center; /* centruoja paveikslėlį */
 }
 
+/* Kortelės teksto zona */
 .card-body {
   padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  flex: 1;
+  flex: 1;  /* užima likusią vietą, kad mygtukai visada būtų apačioje */
 }
 
 .card-title {
@@ -337,110 +348,120 @@ label {
   font-size: 1rem;
 }
 
+/* Aprašymas — apribota iki 3 eilučių su daugtaškiu */
 .card-summary {
-  color: var(--muted);
+  color: #8a93a5;
   font-size: 0.85rem;
   max-height: 4.2em;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 3;      /* rodo maks. 3 eilutes */
   line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
+/* Mygtukų zona kortelės apačioje */
 .card-actions {
   display: flex;
   gap: 6px;
-  margin-top: auto;
+  margin-top: auto;  /* stumia į patį apačią */
   flex-wrap: wrap;
 }
 
+/* Kiekvienas mygtukas užima vienodą dalį pločio */
 .card-actions .btn { flex: 1; }
 
+/* Būsenos ženklelis (watching / watched / dropped) */
 .status-badge {
   display: inline-block;
   font-size: 0.72rem;
   padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--panel-2);
-  color: var(--muted);
+  border-radius: 999px;    /* visiškai apvalūs kampai — "pilule" forma */
+  background: #1f232d;
+  color: #8a93a5;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.05em;  /* šiek tiek platesnės raidės */
 }
 
-.status-badge.watching { color: var(--warn); background: rgba(240, 179, 65, 0.1); }
-.status-badge.watched { color: var(--success); background: rgba(63, 207, 142, 0.12); }
-.status-badge.dropped { color: var(--danger); background: rgba(239, 74, 91, 0.1); }
+/* Spalvintos ženklelių versijos pagal būseną */
+.status-badge.watching { color: #f0b341; background: rgba(240, 179, 65, 0.1); }   /* žiūrima dabar */
+.status-badge.watched  { color: #3fcf8e; background: rgba(63, 207, 142, 0.12); }  /* žiūrėta */
+.status-badge.dropped  { color: #ef4a5b; background: rgba(239, 74, 91, 0.1); }    /* atmesta */
 
 /* =============================================
-   FILTER CHIPS — the status filter buttons on the watchlist
+   FILTER CHIPS — būsenos filtro mygtukai sąraše
    ============================================= */
 
+/* Filtrų juosta */
 .filter-bar {
   display: flex;
   gap: 8px;
   margin-bottom: 18px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* persikelia į kitą eilutę jei netelpa */
 }
 
+/* Vienas filtro mygtukas */
 .chip {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--muted);
+  background: #171a21;
+  border: 1px solid #2a2f3a;
+  color: #8a93a5;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: 999px;  /* apvalus kaip ženklelis */
   cursor: pointer;
   font-size: 0.82rem;
   font-family: inherit;
   transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
 
-.chip:hover:not(.on) { background: var(--panel-2); border-color: var(--muted); color: var(--text); }
+/* Hover tik neaktyviam chip'ui */
+.chip:hover:not(.on) { background: #1f232d; border-color: #8a93a5; color: #e7eaf0; }
 
+/* Aktyvus filtras — violetinis */
 .chip.on {
-  background: var(--primary);
+  background: #8b6fff;
   color: white;
-  border-color: var(--primary);
+  border-color: #8b6fff;
 }
 
 /* =============================================
-   TOAST — brief notification at the bottom of the screen
+   TOAST — trumpas pranešimas ekrano apačioje
    ============================================= */
 
 .toast {
-  position: fixed;
+  position: fixed;           /* fiksuotas ekrane, nepriklausomai nuo slinkimo */
   bottom: 24px;
   left: 50%;
-  transform: translateX(-50%);
-  background: var(--panel);
-  border: 1px solid var(--border);
+  transform: translateX(-50%); /* centruoja horizontaliai */
+  background: #171a21;
+  border: 1px solid #2a2f3a;
   padding: 10px 18px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   font-size: 0.9rem;
-  z-index: 100;
+  z-index: 100;              /* virš viso kito turinio */
   animation: toast-in 0.2s ease;
 }
 
+/* Toast atsiranda iš apačios su fade efektu */
 @keyframes toast-in {
   from { opacity: 0; transform: translateX(-50%) translateY(10px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-.toast.error { border-color: var(--danger); color: var(--danger); }
-.toast.success { border-color: var(--success); color: var(--success); }
+/* Spalvintos toast versijos */
+.toast.error   { border-color: #ef4a5b; color: #ef4a5b; }
+.toast.success { border-color: #3fcf8e; color: #3fcf8e; }
 
 /* =============================================
-   RESPONSIVE TOPBAR
-   On mobile the tabs wrap below the brand on a second row.
-   At ≥720px the tabs stay inline on the same row.
+   RESPONSIVE TOPBAR — pritaikymas mobiliems
+   Mobiliame skiltys pereina į antrą eilutę po brand.
+   Nuo ≥720px skiltys lieka toje pačioje eilutėje.
    ============================================= */
 
 @media (min-width: 720px) {
   .tabs {
-    order: 0;
+    order: 0;      /* grąžina į natūralią poziciją (šalia brand) */
     width: auto;
-    flex: 1;
+    flex: 1;       /* užima likusią vietą tarp brand ir auth-area */
   }
 }
-
